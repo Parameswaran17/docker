@@ -56,11 +56,17 @@ resource "aws_instance" "docker" {
               sudo apt-get install -y docker.io
               sudo systemctl start docker
               sudo systemctl enable docker
-              EOF
+              sudo usermod -aG docker ubuntu
+              sleep 30
 
+              # Ensure you upload the docker_image.tar file to this path beforehand
+              sudo docker pull parameswaran17/docker:latest # Replace 'mydockerimage' with your Docker image
+              sudo docker run -d --name mycontainer parameswaran17/docker:latest 
+              EOF
+    
   provisioner "file" {
     source      = "/home/paramesh/Terraform-Docker-AWS/docker_image.tar"
-    destination = "/home/ubuntu/docker/docker_image.tar"
+    destination = "/home/ubuntu/parameswaran17"
 
     connection {
       type        = "ssh"
@@ -72,12 +78,19 @@ resource "aws_instance" "docker" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod u+rw /home/ubuntu/docker/docker_image.tar",
-      "sudo docker load -i /home/ubuntu/docker/docker_image.tar",
-      "sudo docker pull docker_image",
-      "sudo docker run -d -p 5000:5000 --name my_container docker_image"
+      "sudo apt-get update -y",
+      "sudo apt-get install -y docker.io",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker",
+      "sudo usermod -aG docker ubuntu",
+      "sleep 30",
+      "sudo docker load -i /home/ubuntu/parameswaran17/docker.tar",
+      "sudo docker stop mycontainer || true",  # Stop the container if it exists
+      "sudo docker rm mycontainer || true",    # Remove the container if it exists
+      "sudo docker run -d --name mycontainer parameswaran17/docker:latest"    
+    
     ]
-
+     
 
     connection {
       type        = "ssh"
