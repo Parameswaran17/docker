@@ -60,7 +60,7 @@ resource "aws_instance" "docker" {
 
   provisioner "file" {
     source      = "/home/paramesh/Terraform-Docker-AWS/docker_image.tar"
-    destination = "/home/paramesh/docker_image.tar"
+    destination = "/home/ubuntu/docker/docker_image.tar"
 
     connection {
       type        = "ssh"
@@ -72,10 +72,11 @@ resource "aws_instance" "docker" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /home/paramesh/docker_image.tar",
-      "sudo docker load -i /home/paramesh/Terraform-Docker-AWS/docker_image.tar",
+      "sudo chmod +x /home/ubuntu/docker/docker_image.tar",
+      "sudo docker load -i /home/ubuntu/docker/docker_image.tar",
       "sudo docker run -d -p 5000:5000 --name my_container docker_image:latest"
     ]
+
 
     connection {
       type        = "ssh"
