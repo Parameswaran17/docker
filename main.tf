@@ -72,8 +72,9 @@ resource "aws_instance" "docker" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo chmod +x /home/ubuntu/docker/docker_image.tar",
+      "sudo chmod u+rw /home/ubuntu/docker/docker_image.tar",
       "sudo docker load -i /home/ubuntu/docker/docker_image.tar",
+      "sudo docker pull docker_image",
       "sudo docker run -d -p 5000:5000 --name my_container docker_image"
     ]
 
